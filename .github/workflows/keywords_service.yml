@@ -54,6 +54,7 @@ jobs:
         PGPORT: 5432
         PGUSER: test
         PGPASSWORD: postgres
+        PGDATABASE: keyword_test_db
 
       run:
         psql -f ./schema.sql
