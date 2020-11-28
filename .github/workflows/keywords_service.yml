@@ -3,18 +3,18 @@ name: Keywords Service
 on: [push]
 
 jobs:
-  env:
-    POSTGRES_PASSWORD: postgres
-    POSTGRES_USER: test
-    POSTGRES_DB: keyword_test_db
-        
+      
   test:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.8]
-
+    env:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: test
+      POSTGRES_DB: keyword_test_db
+      
     services:
       postgres:
         image: postgres
@@ -40,7 +40,7 @@ jobs:
 
       run:
         createdb keyword_test_db
-        
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
