@@ -3,7 +3,7 @@ name: Keywords Service
 on: [push]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
     strategy:
@@ -15,12 +15,16 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: test
+          POSTGRES_DB: keyword_test_db
 
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+        ports: 5432:5432
 
     steps:
     - uses: actions/checkout@v2
@@ -47,10 +51,14 @@ jobs:
 
     - name: Test with pytest
       env:
-        POSTGRES_HOST: postgres
+        POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
+        POSTGRES_DATABASE: keyword_test_db
+        POSTGRES_USER: test
+        POSTGRES_PASSWORD: postgres
         NLTK_DATA: ./nltk_data
         FLASK_SECRET_KEY: test
+
 
       run: |
         pytest
