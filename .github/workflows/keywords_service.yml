@@ -1,5 +1,14 @@
 name: Keywords Service
 
+env:
+  POSTGRES_USER: test
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: keyword_test_db
+  PGUSER: test
+  PGPASSWORD: postgres
+  PGDATABASE: keyword_test_db
+
+
 on: [push]
 
 jobs:
@@ -15,11 +24,6 @@ jobs:
       postgres:
         image: postgres
 
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: test
-          POSTGRES_DB: keyword_test_db
-        
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -52,10 +56,7 @@ jobs:
       env: 
         PGHOST: localhost
         PGPORT: 5432
-        PGUSER: test
-        PGPASSWORD: postgres
-        PGDATABASE: keyword_test_db
-
+    
       run:
         psql -f ./schema.sql
     # - name: Lint with flake8
@@ -65,19 +66,21 @@ jobs:
     #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-
-
-
     - name: Test with pytest
       env:
-        POSTGRES_DB: keyword_test_db
-        POSTGRES_USER: test
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
-        POSTGRES_PASSWORD: postgres
         NLTK_DATA: ./nltk_data
         FLASK_SECRET_KEY: test
 
-
       run: |
         pytest
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+    - uses: actions/checkout@v2
+    - name: build docker image
+      run:
+        docker build -t keywords_service .
