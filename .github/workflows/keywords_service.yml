@@ -78,6 +78,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build docker image
-      run:
+      run: |
         python setup.py sdist
         docker build -t keywords_service .
