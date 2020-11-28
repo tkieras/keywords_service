@@ -34,10 +34,12 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Initialize database 
+      timeout-minutes: 2
       env: 
         PGHOST: localhost
         PGPORT: 5432
         PGUSER: test
+        PGPASSWORD: postgres
 
       run:
         createdb keyword_test_db
