@@ -96,6 +96,7 @@ jobs:
         ECR_REPOSITORY: keywords_service
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        python setup.py sdist
         docker build -t keywords_service .
         docker tag keywords_service $ECR_REGISTRY/$ECR_REPOSITORY
         docker push $ECR_REGISTRY/$ECR_REPOSITORY
