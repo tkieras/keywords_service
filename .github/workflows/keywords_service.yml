@@ -72,12 +72,28 @@ jobs:
       run: |
         pytest
 
-  build:
+  build-push:
     runs-on: ubuntu-latest
     needs: [test]
+    
     steps:
     - uses: actions/checkout@v2
-    - name: build docker image
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: keywords_service
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        python setup.py sdist
         docker build -t keywords_service .
+        docker tag keywords_service $ECR_REGISTRY/$ECR_REPOSITORY
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY
+
+    - name: Logout of Amazon ECR
+      if: always()
+      run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
