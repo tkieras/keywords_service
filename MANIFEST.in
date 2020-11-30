@@ -1,1 +1,1 @@
-include keywords_service/schema.sql
+graft keywords_service/resources
