@@ -9,6 +9,8 @@ This package also includes helpers for authentication and database access."""
 import os
 from flask import Flask
 
+from psycopg2 import OperationalError
+
 from . import db, auth
 from .views import absolute_keywords, documents, groups, relative_keywords
 
@@ -30,9 +32,16 @@ def create_app():
 
     @app.route('/ping')
     def ping():
-        return {"status" : "alive"}
+        status = "alive"
+        try:
+            get_db()
+        except OperationalError:
+            status = "no_db"
+
+        return {"status" : status}
 
     db.init_app(app)
+    db.init_schema()
 
     app.register_blueprint(auth.bp)
 

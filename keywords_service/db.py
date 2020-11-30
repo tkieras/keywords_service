@@ -30,3 +30,9 @@ def close_db(e=None):
 def init_app(app):
     """ Helper function to register the close_db function with create_app."""
     app.teardown_appcontext(close_db)
+
+def init_schema():
+    db, cur = get_db()
+    with open("schema.sql") as script:
+        cur.execute(script.read())
+    db.commit()
