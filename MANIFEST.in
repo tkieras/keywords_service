@@ -1,1 +1,1 @@
-include schema.sql
+include keywords_service/schema.sql
