@@ -34,7 +34,7 @@ def create_app():
     def ping():
         status = "alive"
         try:
-            get_db()
+            db.get_db()
         except OperationalError:
             status = "no_db"
 
