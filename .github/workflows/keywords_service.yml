@@ -57,7 +57,7 @@ jobs:
         PGDATABASE: keyword_test_db
     
       run:
-        psql -f ./schema.sql
+        psql -f ./keywords_service/schema.sql
 
     - name: Test with pytest
       env:
