@@ -41,7 +41,9 @@ def create_app():
         return {"status" : status}
 
     db.init_app(app)
-    db.init_schema()
+
+    with app.app_context():
+        db.init_db()
 
     app.register_blueprint(auth.bp)
 
