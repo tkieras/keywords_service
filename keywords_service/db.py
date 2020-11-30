@@ -1,5 +1,7 @@
 """ Contains helper functions for interfacing with the database """
 
+from importlib import resources
+
 import psycopg2
 import psycopg2.extras
 from flask import current_app, g
@@ -34,6 +36,7 @@ def init_app(app):
 def init_db():
     db, cur = get_db()
 
-    with open("schema.sql") as script:
-        cur.execute(script.read())
+    script = resources.read_text("keywords_service.resources", "schema.sql")
+    
+    cur.execute(script)
     db.commit()
