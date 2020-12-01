@@ -5,8 +5,6 @@ from flask import (
         Blueprint, g, make_response
     )
 
-#from flask_httpauth import HTTPBasicAuth
-
 from keywords_service.auth import auth
 from keywords_service.db import get_db
 
@@ -25,7 +23,7 @@ def absolute_keywords(doc_id, check_owner=True):
     _, cur = get_db()
 
     cur.execute(
-            'SELECT d.created, d.uri, d.owner_id'
+            'SELECT d.created, d.name, d.owner_id'
             ' FROM document d'
             ' WHERE d.id = %s', (doc_id,)
         )

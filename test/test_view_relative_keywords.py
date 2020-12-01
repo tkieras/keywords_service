@@ -1,6 +1,6 @@
 from conftest import test_users, make_header
 
-test_input = {"uri" : "test", "content": "This is a test."}
+test_input = {"name" : "test", "content": "This is a test."}
 
 
 def test_get_normal_document(client):

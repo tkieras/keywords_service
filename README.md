@@ -1,6 +1,8 @@
 
 # Relative Keywords Service
 
+![build](https://github.com/tkieras/keywords_service/workflows/build/badge.svg)
+
 Implementation of a document content tagging service, using Flask and NLTK and available through a REST API. A user or client may retrieve the keywords provided by this service and assign them as tags in a file system, in browser bookmarks, or other databases. Most document content is discarded by the server after initial processing, though at this time for security and privacy reasons this service should not be used with sensitive data.
 
 ## Purpose: Tagging Documents Intelligently
@@ -11,44 +13,81 @@ However, a major drawback of tagging documents is that the number of tags can in
 
 ## Usage
 
-All interactions must be carried out with basic authentication either by:
-	- username/password
-	- auth_token
+### Authentication
 
-Register:
-	- POST to "/api/auth/register" with data containing:
-		- "username" : "your username"
-		- "password" : "your password"
+#### 1. Authentication methods:
+All interactions except registration of a new user must be authenticated using HTTP Basic Authentication. Note that the server that presents this service to users should be configured with HTTPS. Two methods are supported:
 
-An authentication token may be retrieved:
-	- GET to "/api/auth/token"
+* username/password
+* auth_token
 
-Documents may be added, a prerequisite for any other operations on the document:
-	- POST to "/api/documents" with data containing:
-		- "uri" : "path/to/resource" (URL/filepath where the content may be found).
-		- "content" : "text content here" (the text content of the document).
+#### 2. Register a new user:
+POST "/api/auth/register"
+* { "username" : "your username"
+  "password" : "your password" }
 
-Documents may be deleted:
-	- DELETE to "/api/documents/<id>"
+#### 3. Retrieve an authentication token:
+GET "/api/auth/token"
 
-Basic keywords may be retrieved for a document:
-	- GET "/api/documents/<id>/absolute_keywords"
+### Documents
 
-All document groups may be retrieved:
-	- GET "/api/groups"
-	- Implementation pending
+#### Add a document:
+POST "/api/documents"
+* {"name" : "name of your choosing",
+  "content" : "text content here"}
 
-The members of a single group may be retrieved:
-	- GET "/api/group/<id>"
-	- Implementation pending
+Adding a document involves sending the text of the document to the server along with a name. The name may be any value, though it is suggested to use a URL or filepath.
 
-The final ("relative") keywords of a document may be retrieved:
-	- GET "/api/documents/<id>/relative_keywords"
-	- Implementation pending
+When a document is added, the text content is processed, yielding a set of keywords called 'absolute keywords'. These are stored in the database for future use, while the raw text content is discarded. 
 
-The final ("relative") keywords of a document group may be retrieved:
-	- GET "/api/group/<id>/relative_keywords"
-	- Implementation pending
+The document id is returned in the response body, and the path to the resource is in the Location header.
+
+#### Delete a document
+DELETE "/api/documents/<id>"
+
+When a document is deleted, the keywords are no longer available for retrieval.
+
+### Keywords
+
+#### Retrieve absolute keywords
+GET "/api/documents/<id>/absolute_keywords"
+
+Basic keywords may be retrieved for a document. These represent document content independent of any other documents (absolute, as opposed to relative).
+
+#### Retrieve relative keywords for a document
+
+* Under construction
+
+GET "/api/documents/<id>/relative_keywords"
+
+Retrieving relative keywords are the primary use case for the API. After a document is added, the relative keywords may be retrieved. The algorithm for determining relative keywords is described elsewhere in this document.
+
+#### Retrieve relative keywords for a group
+
+* Under construction
+
+GET "/api/group/<id>/relative_keywords"
+
+The relative keywords of a document are the sum of the relative keywords that are attached to each group that the document belongs to. It may be useful to directly retrieve the relative keywords that belong to a specific group.
+
+### Groups
+
+#### Retrieve all groups
+
+* Under construction
+
+GET "/api/groups"
+
+It may be useful to retrieve the groupings discovered in the document set. This method will return a dictionary where the key is the group id and the value is the list of document ids that belong to the group. Note that a single document may belong to several groups, depending on configuration options.
+
+#### Retrieve the members of a single group
+
+* Under construction
+
+GET "/api/group/<id>"
+
+It may be useful to retrieve the members of a particular group. This may be accomplished by this method.
+
 
 ## Algorithm Description
 
@@ -70,10 +109,11 @@ The inspiration for the algorithm comes from Wittgenstein's theory of family res
 ## Notes
 
 The service requires several environment variables to be set:
-	- FLASK_SECRET_KEY
-		- Per usual Flask.
-	- NLTK_DATA 
-		- Must point to the folder `nltk_data` in this repository.
-	- POSTGRES_{USER, PASSWORD, HOST, PORT, DB}
-		- Must point to a Postgres database with the schema defined by `schema.sql` in this repository.
+	
+* FLASK_SECRET_KEY
+	* Per usual Flask.
+* NLTK_DATA 
+	* Must point to the folder `nltk_data` in this repository.
+* POSTGRES_{USER, PASSWORD, HOST, PORT, DB}
+		
 

@@ -1,6 +1,6 @@
 from conftest import test_users, make_header
 
-test_input = {"uri" : "test", "content": "This is a test."}
+test_input = {"name" : "test", "content": "This is a test."}
 
 def test_post_empty(client):
 
@@ -17,13 +17,13 @@ def test_post_no_content(client):
 	response = client.post('/api/documents', 
 		headers=make_header(test_users[0]["username"], 
 			test_users[0]["password"]),
-		json={"uri": "test"})
+		json={"name": "test"})
 
 	assert response.status_code == 400
 	assert "message" in response.json
 
 
-def test_post_no_uri(client):
+def test_post_no_name(client):
 
 	response = client.post('/api/documents', 
 		headers=make_header(test_users[0]["username"], 
@@ -42,6 +42,7 @@ def test_post_normal(client):
 	assert response.status_code == 201
 	assert "Location" in response.headers
 	assert "message" in response.json
+	assert "id" in response.json
 
 
 def test_post_repeat(client):
@@ -78,6 +79,7 @@ def test_delete_normal(client):
 	assert response.status_code == 201
 	assert "Location" in response.headers
 	assert "message" in response.json
+	assert "id" in response.json
 
 	location = response.headers["Location"].split("/")
 	id = None
@@ -112,6 +114,7 @@ def test_delete_wrong_user(client):
 	assert response.status_code == 201
 	assert "Location" in response.headers
 	assert "message" in response.json
+	assert "id" in response.json
 
 	location = response.headers["Location"].split("/")
 	id = None

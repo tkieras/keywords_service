@@ -20,16 +20,13 @@ bp = Blueprint('documents', __name__, url_prefix="/api/documents")
 @bp.route('/', methods=["POST"])
 @auth.login_required
 def create_absolute_keywords():
-    """ Post a document to add it to the working set. Currently the content
-    must be extracted by the user and passed in the request. The 'uri' field
-    may be used in the future to move document retrieval to the server, but
-    currently it is simply an identifier that the user may set to any value.
+    """ Post a document to add it to the working set.
 
     When a document is added the content is not stored in the database. Rather,
     the 'absolute keywords' are extracted along with their weights, and these
     are stored until the document is deleted. """
 
-    error_messages = {"uri" : "Key 'uri' is required.",
+    error_messages = {"name" : "Key 'name' is required.",
                       "content": "Key 'content' is required.",
                       "empty" : "No data provided."}
 
@@ -37,7 +34,7 @@ def create_absolute_keywords():
     if not request.json:
         errors.append(error_messages["empty"])
     else:
-        for key in ("uri", "content"):
+        for key in ("name", "content"):
             if key not in request.json.keys():
                 errors.append(error_messages[key])
 
@@ -52,7 +49,7 @@ def create_absolute_keywords():
         db, cur = get_db()
 
         cur.execute(
-            'SELECT uri, id, created FROM document'
+            'SELECT name, id, created FROM document'
             ' WHERE checksum = %s', (checksum,)
             )
         prior_creation = cur.fetchone()
@@ -68,12 +65,12 @@ def create_absolute_keywords():
 
     if not response:
 
-        uri = request.json["uri"]
+        name = request.json["name"]
 
         cur.execute(
-                'INSERT INTO document (uri, checksum, owner_id)'
+                'INSERT INTO document (name, checksum, owner_id)'
                 ' VALUES (%s, %s, %s)',
-                (uri, checksum, g.user)
+                (name, checksum, g.user)
             )
 
         db.commit()
@@ -94,7 +91,8 @@ def create_absolute_keywords():
                 )
         db.commit()
 
-        response = make_response({"message":"Keywords created."}, 201)
+        response = make_response({"message":"Keywords created.", 
+                                  "id":doc_id}, 201)
         response.headers["Location"] = url_for(
             'absolute_keywords.absolute_keywords', doc_id=doc_id)
 
@@ -110,7 +108,7 @@ def delete(doc_id):
 
     db, cur = get_db()
     cur.execute(
-            'SELECT d.created, d.uri, d.owner_id'
+            'SELECT d.created, d.name, d.owner_id'
             ' FROM document d'
             ' WHERE d.id = %s', (doc_id,)
         )
