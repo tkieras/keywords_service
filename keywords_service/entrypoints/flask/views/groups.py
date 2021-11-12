@@ -14,13 +14,11 @@ from flask import (
         Blueprint, request
     )
 
-from keywords_service.auth import auth
-from keywords_service.db import get_db
 
 bp = Blueprint('groups', __name__, url_prefix="/api/groups")
 
 @bp.route('/', methods=["GET", "POST"])
-@auth.login_required
+#@auth.login_required
 def groups(check_owner=True):
     """ Getting the groups involves clustering and/or community detection
     in the document graph. Posting to groups will involve the user specifying
@@ -30,7 +28,7 @@ def groups(check_owner=True):
 
     if request.method == "GET":
         pass
-        # db, cur = get_db()
+       
 
     elif request.method == "POST":
         pass
@@ -44,7 +42,7 @@ def groups(check_owner=True):
 
 
 @bp.route('/<int:group_id>', methods=["GET", "DELETE"])
-@auth.login_required
+#@auth.login_required
 def group(group_id, check_owner=True):
     """ To retrieve just a single group by group id. Or to delete a group.
     The only groups that can be deleted are those that were manually
@@ -53,7 +51,6 @@ def group(group_id, check_owner=True):
 
     if request.method == "GET":
         pass
-        # db, cur = get_db()
 
     elif request.method == "DELETE":
         pass

@@ -23,7 +23,7 @@ All interactions except registration of a new user must be authenticated using H
 
 #### 2. Register a new user:
 POST "/api/auth/register"
-* { "username" : "your username"
+* { "username" : "your username",
   "password" : "your password" }
 
 #### 3. Retrieve an authentication token:
@@ -43,14 +43,14 @@ When a document is added, the text content is processed, yielding a set of keywo
 The document id is returned in the response body, and the path to the resource is in the Location header.
 
 #### Delete a document
-DELETE "/api/documents/<id>"
+DELETE "/api/documents/{id}"
 
 When a document is deleted, the keywords are no longer available for retrieval.
 
 ### Keywords
 
 #### Retrieve absolute keywords
-GET "/api/documents/<id>/absolute_keywords"
+GET "/api/documents/{id}/absolute_keywords"
 
 Basic keywords may be retrieved for a document. These represent document content independent of any other documents (absolute, as opposed to relative).
 
@@ -58,7 +58,7 @@ Basic keywords may be retrieved for a document. These represent document content
 
 * Under construction
 
-GET "/api/documents/<id>/relative_keywords"
+GET "/api/documents/{id}/relative_keywords"
 
 Retrieving relative keywords are the primary use case for the API. After a document is added, the relative keywords may be retrieved. The algorithm for determining relative keywords is described elsewhere in this document.
 
@@ -66,7 +66,7 @@ Retrieving relative keywords are the primary use case for the API. After a docum
 
 * Under construction
 
-GET "/api/group/<id>/relative_keywords"
+GET "/api/group/{id}/relative_keywords"
 
 The relative keywords of a document are the sum of the relative keywords that are attached to each group that the document belongs to. It may be useful to directly retrieve the relative keywords that belong to a specific group.
 
@@ -84,7 +84,7 @@ It may be useful to retrieve the groupings discovered in the document set. This 
 
 * Under construction
 
-GET "/api/group/<id>"
+GET "/api/group/{id}"
 
 It may be useful to retrieve the members of a particular group. This may be accomplished by this method.
 

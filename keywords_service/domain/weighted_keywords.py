@@ -17,6 +17,7 @@ may be overridden by passing a dictionary to extract_keywords.
         fractions, such that the sum of all keyword weights will be the minimum
         number necessary to be equal or greater than the keyword_threshold.
 """
+from dataclasses import dataclass
 
 import re
 from collections import Counter
@@ -35,8 +36,12 @@ stopwords = set(stopwords.words('english'))
 punct = re.compile(r'[^\w\d\s]+')
 lemmatizer = WordNetLemmatizer()
 
+@dataclass
+class WeightedKeyword:
+    keyword: str
+    weight: float
 
-def extract_keywords(text, user_config=None):
+def extract(text, user_config=None):
     """ Main function for extracting a set of keywords from a text string. If
     a user_config dictionary is passed, containing keys are added/overwritten
     in the default config. Returns a dictionary keywords and weights."""
@@ -50,13 +55,12 @@ def extract_keywords(text, user_config=None):
     tokens.extend(get_ngrams(tokens, config["ngram_max"]))
     tokens = length_threshold(tokens, config["min_tag_length"])
 
-
     counts, total = count_tokens(tokens)
     weights = calculate_weights(counts, total)
 
     keywords = apply_threshold(weights, config["keyword_threshold"])
 
-    return keywords
+    return {k : WeightedKeyword(k, v) for k, v in keywords.items()}
 
 def strip_punct(word):
     """ Removes punctuation from the word."""

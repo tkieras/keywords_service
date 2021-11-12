@@ -10,20 +10,17 @@ from flask import (
         Blueprint, request
     )
 
-from keywords_service.auth import auth
-from keywords_service.db import get_db
 
 bp = Blueprint('relative_keywords', __name__, url_prefix="/api")
 
 @bp.route('/documents/<int:doc_id>/relative_keywords', methods=["GET"])
-@auth.login_required
+#@auth.login_required
 def document_relative_keywords(doc_id, check_owner=True):
     """ Retrieves the relative keywords for the specified document. """
     response = None
 
     if request.method == "GET":
         pass
-        # db, cur = get_db()
 
 
     if not response:
@@ -33,7 +30,7 @@ def document_relative_keywords(doc_id, check_owner=True):
 
 
 @bp.route('/groups/<int:group_id>/relative_keywords', methods=["GET"])
-@auth.login_required
+#@auth.login_required
 def group(group_id, check_owner=True):
     """ Retrieves the relative keywords associated with this particular group.
     Note that the group keywords are only those that are chosen for this
@@ -43,8 +40,7 @@ def group(group_id, check_owner=True):
 
     if request.method == "GET":
         pass
-        # db, cur = get_db()
-
+       
 
     if not response:
         response = {"message": "Not implemented."}

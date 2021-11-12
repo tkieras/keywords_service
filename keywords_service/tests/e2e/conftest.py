@@ -1,12 +1,12 @@
 from flask import g, appcontext_pushed
 
 import pytest
-from contextlib import contextmanager
 
 from werkzeug.security import generate_password_hash
 from requests.auth import _basic_auth_str
 
 import keywords_service
+
 from keywords_service.db import get_db
 from keywords_service.auth import auth
 
@@ -40,21 +40,8 @@ def app():
 
 	yield app
 
-	# # Clean up the database between tests
-	# with app.app_context():
-	# 	db, cur = get_db()
-		
 
 @pytest.fixture
 def client(app, monkeypatch):
 	client = app.test_client()
-	#monkeypatch.setattr(auth, 'verify_password', lambda x, y: True)
 	return client
-
-
-# @contextmanager
-# def user_set(app, user):
-# 	def handler(sender, **kwargs):
-# 		g.user = user
-# 	with appcontext_pushed.connected_to(handler, app):
-# 		yield
